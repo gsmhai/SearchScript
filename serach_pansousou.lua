@@ -4,7 +4,7 @@ local json = require "cjson.safe"
 
 script_info = {
 	["title"] = "盘搜搜",
-	["version"] = "0.0.1",
+	["version"] = "0.0.2",
 	["description"] = "http://m.pansoso.com",
 }
 
@@ -70,14 +70,14 @@ function request(args)
 end
 
 function onSearch(key,page)
-	local url = "http://m.pansoso.com/zh/"..pd.urlEncode(key).."_"..page
+	local url = "https://m.pansoso.com/zh/"..pd.urlEncode(key).."_"..page
 	local result = {}
 	local start = 1
 	local p_start,p_end,title,href,sharer,time,description
 	local data = request({url=url})
 	p_start,start = string.find(data,'<div id="con">')
 	while true do
-		p_start,p_end,href,title,fileSize,sharer,time=string.find(data,'<a href="(.-)" .-<div class="des">文件名:(.-) , 文件大小:(.-) , 分享者:(.-) , 分享时间:(.-) ,',start)
+        	p_start,p_end,href,title,fileSize,sharer,time=string.find(data,'<a href="(.-)" .-<div class="pss"><h2>(.-)</h2><div class="des">文件大小:(.-) , 分享者:(.-) , 分享时间:(.-) ,',start)
 
 		if not href then
 			pd.logInfo("no href:..")
@@ -85,7 +85,7 @@ function onSearch(key,page)
 		end
 
 
-		href = "http://m.pansoso.com"..href
+		--href = "http://m.pansoso.com"..href
 		local tooltip = string.gsub(title, key, "%1")
 		title = string.gsub(title,key, "{c #ff0000}%1{/c}")
 		description = "文件大小："..fileSize.."  ".."分享者："..sharer
